@@ -139,3 +139,6 @@ cython_debug/
 
 # Bot token
 .env
+
+# PyCharm specific
+.idea
