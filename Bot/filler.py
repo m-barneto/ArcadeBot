@@ -4,35 +4,36 @@ from Bot.Filler.board import Board
 from Bot.Filler.filler_invite import Filler_Invite
 from Bot.Filler.player import Player
 
-
-# TODO
-# - Fix challenge arguments
-# - @'d challenges
-#   !c size(3-14) user(empty=public,@user,ai)
 from Bot.gameinterface import GameInterface
 
 
 class Filler(GameInterface):
     def __init__(self, lobby):
+        # Save reference to GameLobby
         self.lobby = lobby
+        # Set number of required channels for this game
         self.num_channels = 2
+        # Create a list to store players in the game
         self.players = []
+        # Create a list to keep a reference to the chatlog messages
         self.chat = []
         # TODO have a dice roll to see who goes first
         self.turn = lobby.users[0].id
-        print(f'{lobby.invite.size}')
+        # Initialize the game board using the size argument in the invite
+        # The Data.get() is a singleton that I used because I couldn't figure out a circular import
         self.board = Board(lobby.invite.size, Data.get())
 
     @staticmethod
     async def create_invite(c, args):
-        a_len = len(args)
+        # TODO fix this aweful spaghetti code, I literally have 2 sections of duplicate code
         try:
+            # Default size is 9
             size = 9
             whitelist = []
             member = None
-            if a_len > 0:
+            if len(args) > 0:
                 size = max(3, min(14, int(args[0])))
-                if a_len > 1:
+                if len(args) > 1:
                     if args[1].lower() == 'ai':
                         whitelist.append('ai')
                     elif args[1].startswith('<@!') and args[1].endswith('>'):
@@ -45,8 +46,8 @@ class Filler(GameInterface):
                             return None
                     else:
                         raise ValueError
-            if a_len > 0:
-                if a_len > 1:
+            if len(args) > 0:
+                if len(args) > 1:
                     if args[1].lower() == 'ai':
                         msg = None
                     else:
